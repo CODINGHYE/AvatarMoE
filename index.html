@@ -1,0 +1,316 @@
+<!--
+  AvatarMoE — Project Page (clean academic layout, Nerfies-style)
+  Deploy: drop this file in your repo as index.html.
+  GitHub Pages → Settings → Pages → Branch: main, /(root).
+
+  ASSETS — create a /static folder next to this file:
+    static/images/teaser.jpg          ← teaser figure (Fig. 1)
+    static/images/pipeline.jpg        ← pipeline figure (Fig. 2)
+    static/videos/ood_377.mp4 ...     ← OOD comparison vs 3DGS-Avatar (Suppl. 1–6)
+    static/videos/np_gart_1.mp4 ...   ← Novel Pose vs GART (Suppl. 7–12)
+  Replace each .placeholder block with <img ...> or <video autoplay muted loop playsinline>.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AvatarMoE: Decomposing Non-Rigid Deformation with Part-Aware Experts for 3DGS Avatars</title>
+<meta name="description" content="AvatarMoE decomposes non-rigid avatar deformation into 24 joint-centric experts with a dynamic GMM gating network, eliminating tearing artifacts on out-of-distribution poses.">
+<meta name="keywords" content="3D Gaussian Splatting, Animatable Avatars, Mixture of Experts, 3D Human Reconstruction">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#1f2328;
+    --muted:#5b626b;
+    --link:#1565c0;
+    --line:#e6e8eb;
+    --soft:#f6f7f8;
+    --btn:#363a3f;
+    --maxw:920px;
+    --read:800px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;color:var(--ink);background:#fff;
+    font-family:"IBM Plex Sans",system-ui,Arial,sans-serif;
+    font-size:17px;line-height:1.7;-webkit-font-smoothing:antialiased;
+  }
+  /* reading prose in IBM Plex Serif; structural text stays Plex Sans */
+  .col p,.contrib li,figcaption,.summary{
+    font-family:"IBM Plex Serif",Georgia,serif;
+  }
+  a{color:var(--link);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+
+  /* ---------- hero ---------- */
+  .hero{text-align:center;padding:62px 0 8px}
+  .hero h1{
+    font-size:clamp(22px,3.4vw,31px);font-weight:700;line-height:1.25;
+    letter-spacing:-.01em;margin:0 auto 18px;max-width:48ch;
+  }
+  .venue{font-size:18px;font-weight:600;color:#2b2f34;margin-bottom:22px}
+  .venue .pub{color:var(--muted);font-weight:500}
+
+  .authors{font-size:18px;line-height:1.9;margin:0 0 4px}
+  .authors a{color:var(--ink);font-weight:500}
+  .authors a:hover{color:var(--link)}
+  .authors sup{color:var(--link);font-weight:600;font-size:.72em}
+  .authors .corr{font-style:normal}
+  .affil{color:var(--muted);font-size:15.5px;line-height:1.7;margin:8px auto 4px;max-width:62ch}
+  .affil sup{color:var(--link);font-weight:600}
+  .note{color:var(--muted);font-size:14px;margin-top:2px}
+
+  /* link buttons */
+  .links{display:flex;flex-wrap:wrap;justify-content:center;gap:11px;margin:26px 0 6px}
+  .links a{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--btn);color:#fff;font-size:15px;font-weight:500;
+    padding:9px 18px;border-radius:999px;transition:background .15s;
+  }
+  .links a:hover{background:#23262a;text-decoration:none}
+  .links svg{width:16px;height:16px;flex:none}
+
+  /* ---------- media ---------- */
+  figure{margin:0}
+  .media{margin-top:38px}
+  figure.media{max-width:800px;margin-left:auto;margin-right:auto}
+  .frame{
+    border-radius:8px;overflow:hidden;
+  }
+  .frame img,.frame video{width:100%;display:block}
+  .placeholder{
+    aspect-ratio:16/8;display:flex;align-items:center;justify-content:center;background:var(--soft);
+    color:#8b929b;font-family:"IBM Plex Mono",monospace;font-size:13.5px;text-align:center;padding:24px;
+  }
+  .placeholder code{color:#5b626b;background:#eceef0;border:1px solid #e0e3e6;border-radius:5px;padding:2px 8px}
+  figcaption{color:var(--muted);font-size:14.5px;line-height:1.6;margin-top:14px;text-align:left}
+  figcaption b{color:var(--ink)}
+  .summary{
+    text-align:center;font-size:17px;color:#33383e;max-width:var(--read);
+    margin:18px auto 0;
+  }
+  .summary b{font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding:46px 0 0}
+  h2{
+    font-size:26px;font-weight:700;text-align:center;margin:0 0 22px;letter-spacing:-.01em;
+  }
+  .col{max-width:var(--read);margin:0 auto}
+  .col p{margin:0 0 16px;text-align:justify;hyphens:auto}
+  .contrib{max-width:var(--read);margin:0 auto;padding-left:0;list-style:none}
+  .contrib li{position:relative;padding-left:30px;margin:0 0 14px}
+  .contrib li::before{
+    content:counter(c);counter-increment:c;
+    position:absolute;left:0;top:.15em;
+    font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:500;color:var(--link);
+  }
+  .contrib{counter-reset:c}
+  .contrib b{font-weight:600}
+
+  /* video grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.grid{grid-template-columns:1fr}}
+  .grid .frame .placeholder{aspect-ratio:1/1}
+
+  /* tables */
+  .tablewrap{max-width:760px;margin:0 auto;overflow-x:auto}
+  table{border-collapse:collapse;width:100%;font-size:15px;margin:0 auto}
+  caption{caption-side:top;font-weight:600;font-size:16px;padding-bottom:12px}
+  th,td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{border-bottom:2px solid #cfd3d8;font-size:13.5px;color:var(--muted);font-weight:600}
+  tbody tr.ours td{font-weight:700;background:var(--soft)}
+  .tnote{max-width:760px;margin:10px auto 0;font-size:13.5px;color:var(--muted);text-align:left}
+
+  /* bibtex */
+  pre{
+    max-width:var(--read);margin:0 auto;background:var(--soft);border:1px solid var(--line);
+    border-radius:8px;padding:18px 20px;overflow-x:auto;
+    font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.65;color:#2b2f34;position:relative;
+  }
+  .copy{
+    position:absolute;top:10px;right:10px;background:#fff;border:1px solid var(--line);
+    color:var(--muted);font-family:"IBM Plex Sans";font-size:12.5px;font-weight:500;
+    padding:5px 11px;border-radius:6px;cursor:pointer;
+  }
+  .copy:hover{background:#eef0f2}
+
+  /* footer */
+  footer{max-width:var(--read);margin:0 auto;padding:46px 22px 60px;text-align:center}
+  footer .ack{color:var(--muted);font-size:14px;line-height:1.7}
+  hr.div{border:0;border-top:1px solid var(--line);max-width:var(--read);margin:54px auto 0}
+</style>
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <div class="wrap">
+    <h1>AvatarMoE: Decomposing Non-Rigid Deformation<br>with Part-Aware Experts for 3DGS Avatars</h1>
+
+    <div class="venue">Computers &amp; Graphics 137 (2026) <span class="pub">· Article 104597</span></div>
+
+    <div class="authors">
+      <a href="mailto:hyeria.yang@gmail.com">Hyeri Yang</a><sup>1</sup>,
+      <a href="mailto:junyounghong@yonsei.ac.kr">Junyoung Hong</a><sup>2</sup>,
+      <a href="mailto:shinwng.kim@gmail.com">Shinwoong Kim</a><sup>3</sup>,
+      <a class="corr" href="mailto:kjlee@yongin.ac.kr">Kyungjae Lee</a><sup>1</sup>
+    </div>
+    <div class="affil">
+      <sup>1</sup>School of Artificial Intelligence, Yong In University<br>
+      <sup>2</sup>Department of Artificial Intelligence, Yonsei University<br>
+      <sup>3</sup>Department of Artificial Intelligence Software, Yong In University
+    </div>
+
+    <div class="links">
+      <a href="https://doi.org/10.1016/j.cag.2026.104597">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Paper</a>
+      <a href="#" data-arxiv>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 9l4 6 4-6"/></svg>arXiv</a>
+      <a href="#video">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="6 4 19 12 6 20 6 4"/></svg>Video</a>
+      <a href="https://github.com/milab-yongin/AvatarMoE">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.6 2 12.2c0 4.5 2.9 8.3 6.8 9.6.5.1.7-.2.7-.5v-1.7c-2.8.6-3.4-1.4-3.4-1.4-.5-1.2-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.5-1.1-4.5-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1 .8-.2 1.6-.3 2.5-.3s1.7.1 2.5.3c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.3 4.7-4.5 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5 3.9-1.3 6.8-5.1 6.8-9.6C22 6.6 17.5 2 12 2z"/></svg>Code</a>
+      <a href="#bibtex">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h9l3 3v13H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>BibTeX</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TEASER ============ -->
+<div class="wrap media">
+  <figure>
+    <div class="frame"><img src="static/images/model_overview.JPG" alt="AvatarMoE overview: weak to robust out-of-distribution poses via learned dynamic weights"></div>
+  </figure>
+  <p class="summary">A single global network averages every body part together, causing <b>tearing and stretching</b>
+    in complex poses. AvatarMoE instead assigns each part its own expert, producing robust deformations on
+    challenging out-of-distribution poses.</p>
+</div>
+
+<!-- ============ ABSTRACT ============ -->
+<section id="abstract">
+  <div class="wrap">
+    <h2>Abstract</h2>
+    <div class="col">
+      <p>While 3D Gaussian Splatting (3DGS) has enabled high-quality, real-time animatable avatars, current
+        methods suffer from a key limitation: they model non-rigid deformations with a single global network,
+        which leads to unnatural artifacts such as tearing and stretching in complex poses. To overcome this, we
+        propose AvatarMoE (part-based Mixture of Experts), a framework that decomposes the human body into
+        joint-centric local regions, each governed by a specialized expert network. We introduce three core
+        contributions: <b>(1) a pose-aware Gaussian Mixture Model-based gating network that dynamically allocates
+        expert influence according to the input pose;</b> <b>(2) a memory-efficient hybrid expert architecture with a
+        shared HashGrid encoder and lightweight decoders;</b> and <b>(3) a novel Intra-Expert Coherence Loss that
+        regularizes each expert's deformation field to prevent local inconsistencies.</b> Extensive experiments show
+        that AvatarMoE significantly reduces such artifacts and produces more robust, visually plausible avatars
+        than previous methods, especially for out-of-distribution (OOD) poses.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ METHOD ============ -->
+<section id="method">
+  <div class="wrap">
+    <h2>Method</h2>
+    <div class="col">
+      <p>We reframe non-rigid deformation as modeling a collection of 24 joint-centric local regions corresponding
+        to the SMPL skeleton, applying fine-grained deformation on a per-cluster basis through a Mixture of
+        Experts architecture. The framework has three core components:</p>
+    </div>
+    <ol class="contrib">
+      <li><b>Dynamic GMM gating.</b> A pose-conditioned Gaussian Mixture Model assigns each 3D point to experts,
+        combining a global pose prior with a local spatial likelihood. Expert influence is a learnable function of
+        pose, rather than a fixed skinning weight.</li>
+      <li><b>Hybrid expert network.</b> A single shared multi-resolution HashGrid encoder feeds 24 lightweight MLP
+        decoders, conditioned by local coordinates and per-joint pose features. This keeps memory bounded and
+        reaches convergence in roughly half the baseline's iterations.</li>
+      <li><b>Intra-Expert Coherence Loss.</b> Minimizing the weighted variance of each expert's deformation field
+        makes every body part move as a coherent unit, suppressing the flicker and tearing caused by routing
+        fluctuation.</li>
+    </ol>
+
+    <figure class="media">
+      <div class="frame"><img src="static/images/architecture.JPG" alt="AvatarMoE pipeline architecture"></div>
+      <figcaption><b>Overview.</b> A pose encoder produces a global feature and 24 per-joint features. The GMM
+        gating predicts pose-aware weights for each expert; in parallel, shared HashGrid features augmented with
+        local coordinates and the per-joint feature drive 24 expert decoders. The final non-rigid deformation is
+        the weighted sum of expert offsets, applied before the rigid transformation and rendering.</figcaption>
+    </figure>
+
+    <figure class="media">
+      <div class="frame"><img src="static/images/visualize_dynamic_weights.JPG" alt="Static SMPL gating weights versus dynamic GMM gating weights for two poses"></div>
+      <figcaption><b>Static vs. dynamic gating weights.</b> We visualize the most influential joint for each point.
+        Static SMPL skinning weights (left) stay fixed regardless of pose, giving an identical influence map for
+        Pose A and Pose B. Our dynamic GMM gating (right) adapts each expert's influence region to the specific
+        pose — note how the weights around the shoulder, arm, and knee shift as the arm moves forward.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section id="results">
+  <div class="wrap">
+    <h2>Results</h2>
+    <div class="col">
+      <p>On out-of-distribution poses from AIST++ and AMASS, AvatarMoE produces smooth, coherent surfaces and
+        avoids the tearing artifacts of global deformation methods. We show comparisons against two baselines:
+        3DGS-Avatar (subjects 377, 392, 393) and GART (subjects 386, 387, 394). In each clip the baseline is on
+        the left and AvatarMoE on the right.</p>
+    </div>
+    <div class="cmp">
+      <div class="cmpgroup">
+        <h3>Comparison with 3DGS-Avatar</h3>
+        <div class="frame"><video autoplay muted loop playsinline><source src="static/videos/ood_377.mp4" type="video/mp4"></video></div>
+        <div class="frame"><video autoplay muted loop playsinline><source src="static/videos/ood_392.mp4" type="video/mp4"></video></div>
+        <div class="frame"><video autoplay muted loop playsinline><source src="static/videos/ood_393.mp4" type="video/mp4"></video></div>
+      </div>
+      <div class="cmpgroup">
+        <h3>Comparison with GART</h3>
+        <div class="frame"><video autoplay muted loop playsinline><source src="static/videos/ood_386.mp4" type="video/mp4"></video></div>
+        <div class="frame"><video autoplay muted loop playsinline><source src="static/videos/ood_387.mp4" type="video/mp4"></video></div>
+        <div class="frame"><video autoplay muted loop playsinline><source src="static/videos/ood_394.mp4" type="video/mp4"></video></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BIBTEX ============ -->
+<section id="bibtex">
+  <div class="wrap">
+    <h2>BibTeX</h2>
+    <pre id="bibsrc"><button class="copy" onclick="copyBib(this)">Copy</button>@article{yang2026avatarmoe,
+  title   = {AvatarMoE: Decomposing Non-Rigid Deformation with Part-Aware Experts for 3DGS Avatars},
+  author  = {Yang, Hyeri and Hong, Junyoung and Kim, Shinwoong and Lee, Kyungjae},
+  journal = {Computers &amp; Graphics},
+  volume  = {137},
+  pages   = {104597},
+  year    = {2026},
+  doi     = {10.1016/j.cag.2026.104597},
+  publisher = {Elsevier}
+}</pre>
+  </div>
+</section>
+ 
+<hr class="div">
+<footer>
+  <p class="ack">Datasets used are publicly available (ZJU-MoCap and People-Snapshot).<br>
+    Code and models: <a href="https://github.com/milab-yongin/AvatarMoE">github.com/milab-yongin/AvatarMoE</a>.</p>
+</footer>
+ 
+<script>
+  // remove the arXiv button until a real link is provided
+  (function(){
+    var a = document.querySelector('[data-arxiv]');
+    if(a && (a.getAttribute('href')==='#' || !a.getAttribute('href'))) a.remove();
+  })();
+ 
+  function copyBib(btn){
+    var txt = document.getElementById('bibsrc').innerText.replace(/^Copy\s*/,'');
+    navigator.clipboard.writeText(txt).then(function(){
+      btn.textContent='Copied'; setTimeout(function(){btn.textContent='Copy';},1500);
+    });
+  }
+</script>
